@@ -37,18 +37,18 @@ from a1_parse_data_v2 import load_pickleddata
 #%% group seperation
 mouse_group = {'C12':'deg_less','C13':'deg_less','C15':'deg_more','C17':'deg_more',
                'C20':'cond_control_noempty','C22':'deg_more',
-                'C23':'cond_control','C24':'cond_control','C25':'recond',
-                'C26':'deg','C28':'recond',
+                'C23':'cond_control_spare','C24':'cond_control_spare','C25':'recond',
+                'C26':'deg_spare','C28':'recond',
                 'C29':'c_control_extra','C30':'c_control_extra','C32':'c_control_extra',
                 'C33':'close',
                 'C34':'far','C35':'close','C36':'far',
                 'C50':'cond_control','C52':'cond_control', 'C53':'cond_control','C54':'cond_control',
-                'C56':'deg','C57':'deg',
+                'C56':'deg_spare','C57':'deg_spare',
                 'C60':'double_A','C61':'double_A','C62':'double_A',
-                'D1-01':'deg','D1-02':'deg','D1-03':'deg','DAT-01':'deg',
-                'D1-05-TDT':'deg','D1-09':'deg','D1-10':'deg','D1-12':'deg','D1-13':'deg','D1-15':'cond_control',
-                'D2-02':'deg','D2-03':'deg','D2-04':'deg','D2-05-TDT':'deg',
-                'D2-16':'deg','D2-17':'deg','D2-18':'cond_control',
+                'D1-01':'deg_spare','D1-02':'deg_spare','D1-03':'deg_spare','DAT-01':'deg_spare',
+                'D1-05-TDT':'deg','D1-09':'deg','D1-10':'deg','D1-12':'deg_spare','D1-13':'deg','D1-15':'cond_control',
+                'D2-02':'deg','D2-03':'deg_spare','D2-04':'deg','D2-05-TDT':'deg',
+                'D2-16':'deg','D2-17':'deg_spare','D2-18':'cond_control',
                 'D2-21':'cond_control','D2-23':'cond_control','D2-24':'cond_control',
                 'M-1':'c_odor','M-2':'c_odor','M-4':'c_odor','M-5':'c_odor',
                 'D1-280':'c_control_extra','D1-300':'c_control_extra',
@@ -64,7 +64,7 @@ for mouse_name in mouse_id:
     path = 'D:/PhD/Behavior/Behavior_Analysis/batch_clean_database/parsed_dataframe_pickle'
     filepath = os.path.join(path,'{}_stats.pickle'.format(mouse_name))
     data = load_pickleddata(filepath)
-    counter = {'cond':0,'deg':5,'deg_less':5,'deg_more':5,'far':5,'close':5,'recond':10,'C_control':5 ,'double_control':5}
+    counter = {'cond':0,'deg':5,'deg_less':5,'deg_more':5,'far':5,'close':5,'recond':10,'C_control':5 ,'double_control':5,'deg_spare':5, 'cond_control_spare':5}
     training_types = data.training_type
     if len(training_types[0]) > 8:
         training_types = [i[7:] for i in training_types]

@@ -33,7 +33,7 @@ import statsmodels.api as sm
 
 #%%
 deg_mice = ['D1-05-TDT','D1-10','D1-13','D2-05-TDT','D2-02','D2-04','D1-09','D2-16']
-control_mice = ['C23','C24','D1-15', 'D2-18','D2-21','D2-23','D2-24'] #还有两只
+control_mice = ['D1-15', 'D2-18','D2-21','D2-23','D2-24','D1-28','D1-30'] 
 c_mice = ['M-2','M-4','M-5']
 c_extra_mice = ['C29','C30','C32','D1-280','D1-300']
 double_a_mice = ['C60','C61','C62'] # not good
@@ -98,6 +98,8 @@ def created_average_licking_psth_for_group(licking_data, TTs, session_num = 10,s
     mean_licking_bymouse_dict = {'go':np.zeros([num_mice,sample_points,session_num]),
                                  'no_go':np.zeros([num_mice,sample_points,session_num]), 
                                 'go_omit':np.zeros([num_mice,sample_points,session_num]), 
+                                'c_omit':np.zeros([num_mice,sample_points,session_num]),
+                                'c_reward':np.zeros([num_mice,sample_points,session_num]),
                                  'unpred_water':np.zeros([num_mice,sample_points,session_num]),
                                  'background':np.zeros([num_mice,sample_points,session_num])}    
     for i,mouse_name in enumerate(licking_data.keys()):
@@ -110,7 +112,7 @@ def created_average_licking_psth_for_group(licking_data, TTs, session_num = 10,s
 #%% create bined licking data for groups
 
 path = 'D:/PhD/Behavior/Behavior_Analysis/batch_clean_database/parsed_dataframe_pickle'
-TT = ['go', 'no_go', 'go_omit', 'background','unpred_water']
+TT = ['go', 'no_go', 'go_omit', 'background','unpred_water','c_reward','c_omit']
 
 deg_mice_lick = create_binned_licking_for_group(deg_mice,TT,path,uplim = 9,lowlim = 0,sample_points = 45)
 control_mice_lick = create_binned_licking_for_group(control_mice,TT,path,uplim = 9,lowlim = 0,sample_points = 45)
@@ -150,10 +152,10 @@ def plot_single_session_average_licking(data, color,legends,CS,US,std_on = False
         # filled area
         num = item.shape[0]
         aa = np.nanmean(item,axis = 0)
-        ax.plot(aa,color = c,label = l,lw = 1.7)
+        ax.plot(aa,color = c,label = l,lw = 2.5)
         if std_on:
             std = np.nanstd(item,axis = 0)
-            ax.fill_between(np.arange(0,45,1), aa-std/num, aa+std/num,alpha = 0.1,color = 'grey') ## shall I devide this by num?
+            ax.fill_between(np.arange(0,45,1), aa-std/np.sqrt(num), aa+std/np.sqrt(num),alpha = 0.1,color = 'grey') ## shall I devide this by num?
         ymin, ymax = ax.get_ylim()
     if CS:       
         # vertical lines
@@ -175,39 +177,95 @@ def plot_single_session_average_licking(data, color,legends,CS,US,std_on = False
     plt.show()
     
 ymax = 10
-# plot_single_session_average_licking(data = [deg_mice_lick_dict['go'],deg_mice_lick_dict['no_go'],deg_mice_lick_dict['go_omit']],
-#                                     session_id = 4,color = ['#ffcb0d','#2e2e2d','#ffe28a'],
-#                                   CS = True,US = True,
-#                                   figsize = (5,4),ylim=[-1,ymax])  
+
 
 plot_single_session_average_licking(data = [deg_mice_lick_dict['go'][:,:,4],deg_mice_lick_dict['go'][:,:,9],
                                             control_mice_lick_dict['go'][:,:,4],control_mice_lick_dict['go'][:,:,9],
                                             c_mice_lick_dict['go'][:,:,4],c_mice_lick_dict['go'][:,:,8],],
-                                    color = ['#ff9203','#fcb85d','#54e3a3','#a1e3c5','#7786f7','#b1b9f0'],
+                                    color = ['#ff8143','#fcb85d','#1b9e77','#66c2a5','#7570b3','#8da0cb',],
                                     legends = ['deg group after conditioning','deg group after degradation',
-                                               'cond group after conditioning','cond group after degradation',
-                                               'C odor group after conditioning','C odor group after degradation'],
+                                                'cond group after conditioning','cond group after degradation',
+                                                'C odor group after conditioning','C odor group after degradation'],
                                   CS = True,US = True,
                                   figsize = (7,4),ylim=[-1,ymax],
-                                  std_on = False,
+                                  std_on =False,
                                   savename = 'deg cond c before and after degradation')  
+## save for later, until c group gets better
+# plot_single_session_average_licking(data = [deg_mice_lick_dict['go'][:,:,4],
+#                                             control_mice_lick_dict['go'][:,:,4],
+#                                             c_mice_lick_dict['go'][:,:,4]],
+#                                     color = ['#ff8143','#66c2a5','#8da0cb',],
+#                                     legends = ['deg group after conditioning',
+#                                                 'cond group after conditioning',
+#                                                 'C odor group after conditioning'],
+#                                   CS = True,US = True,
+#                                   figsize = (7,4),ylim=[-1,ymax],
+#                                   std_on =True,
+#                                   savename = 'deg cond c before degradation')  
+
+
+# plot_single_session_average_licking(data = [deg_mice_lick_dict['go'][:,:,9],
+#                                             control_mice_lick_dict['go'][:,:,9],
+#                                             c_mice_lick_dict['go'][:,:,8]],
+#                                     color = ['#fcb85d','#1b9e77','#7570b3'],
+#                                     legends = ['deg group after degradation',
+#                                                 'cond group after degradation',
+#                                                 'C odor group after degradation'],
+#                                   CS = True,US = True,
+#                                   figsize = (7,4),ylim=[-1,ymax],
+#                                   std_on =True,
+#                                   savename = 'deg cond c after degradation')  
+
+
+#compare in group
+plot_single_session_average_licking(data = [deg_mice_lick_dict['go'][:,:,4],deg_mice_lick_dict['go'][:,:,9],
+                                           ],
+                                    color = ['#ff8143','#fcb85d',],
+                                    legends = ['deg group after conditioning','deg group after degradation',
+                                                ],
+                                  CS = True,US = True,
+                                  figsize = (7,4),ylim=[-1,ymax],
+                                  std_on =True,
+                                  savename = 'deg before and after degradation') 
+ 
+plot_single_session_average_licking(data = [
+                                            control_mice_lick_dict['go'][:,:,4],control_mice_lick_dict['go'][:,:,9],
+                                            ],
+                                    color = ['#1b9e77','#66c2a5'],
+                                    legends = [
+                                                'cond group after conditioning','cond group after degradation',
+                                                ],
+                                  CS = True,US = True,
+                                  figsize = (7,4),ylim=[-1,ymax],
+                                  std_on =True,
+                                  savename = 'cond before and after degradation')  
+
+plot_single_session_average_licking(data = [
+                                            c_mice_lick_dict['go'][:,:,4],c_mice_lick_dict['go'][:,:,8],],
+                                    color = ['#7570b3','#8da0cb'],
+                                    legends = [
+                                                'C odor group after conditioning','C odor group after degradation'],
+                                  CS = True,US = True,
+                                  figsize = (7,4),ylim=[-1,ymax],
+                                  std_on =1,
+                                  savename = 'c before and after degradation')  
 
 plot_single_session_average_licking(data = [deg_mice_lick_dict['go'][:,:,4],deg_mice_lick_dict['go'][:,:,9],
                                             control_mice_lick_dict['go'][:,:,4],control_mice_lick_dict['go'][:,:,9],
                                     deg_mice_lick_dict['no_go'][:,:,4],deg_mice_lick_dict['no_go'][:,:,9],
                                             control_mice_lick_dict['no_go'][:,:,4],control_mice_lick_dict['no_go'][:,:,9]],
-                                    color = ['#ff9203','#fcb85d','#54e3a3','#a1e3c5','grey','grey','grey','grey'],
+                                    color = ['#ff8143','#fcb85d','#1b9e77','#66c2a5','grey','grey','grey','grey'],
                                     legends = ['deg go after conditioning','deg go after degradation',
-                                               'cond go after conditioning','cond go after degradation',
-                                               'no go','','',''],
+                                                'cond go after conditioning','cond go after degradation',
+                                                'no go','','',''],
                                   CS = True,US = True,
                                   figsize = (7,4),ylim=[-1,ymax],
-                                  std_on = False,
+                                  std_on = True,
                                   savename = 'deg cond go and nogo before and after degradation')  
-
+#%% within group
 plot_single_session_average_licking(data = [control_mice_lick_dict['go'][:,:,4],control_mice_lick_dict['go_omit'][:,:,4],
                                             control_mice_lick_dict['no_go'][:,:,4]],
-                                    color = ['#54e3a3','#54d0e3','grey',],
+                                    color = ['#df65b0','#88419d','grey'],
                                     legends = ['cond go after conditioning','cond go omission','cond no go'],
                                   CS = True,US = True,
                                   figsize = (7,4),ylim=[-1,ymax],
@@ -216,13 +274,75 @@ plot_single_session_average_licking(data = [control_mice_lick_dict['go'][:,:,4],
 
 plot_single_session_average_licking(data = [deg_mice_lick_dict['go'][:,:,4],deg_mice_lick_dict['go'][:,:,9],
                                             deg_mice_lick_dict['no_go'][:,:,4],deg_mice_lick_dict['unpred_water'][:,:,9]],
-                                    color = ['#ff9203','#fcb85d','grey','#c074f2'],
+                                    color = ['#df65b0','#fa9fb5','grey','#fe9929'],
                                     legends = ['deg go after conditioning','deg go after degradation',
-                                               'deg no go','deg unpredicted water'],
+                                                'deg no go','deg unpredicted water'],
                                   CS = True,US = True,
                                   figsize = (7,4),ylim=[-1,ymax],
-                                  std_on = False,
+                                  std_on = True,
                                   savename = 'def go and nogo unpred before and after conditioning')  
+
+plot_single_session_average_licking(data = [c_mice_lick_dict['go'][:,:,4],c_mice_lick_dict['go'][:,:,8],
+                                            c_mice_lick_dict['c_reward'][:,:,8],
+                                            c_mice_lick_dict['no_go'][:,:,8]],
+                                    color = ['#df65b0','#fa9fb5','#2b8cbe','grey'],
+                                    legends = ['c go after conditioning',
+                                               'c go after degradation','c c after degradation',
+                                               'deg no go afterdegradation'],
+                                  CS = True,US = True,
+                                  figsize = (7,4),ylim=[-1,ymax],
+                                  std_on =True,
+                                  savename = 'c group go c and nogo before and after conditioning')  
+#%% plot scatter plot for each group
+
+def create_dot_pot(data_list,group_name,color,savepath, savename):
+    fig,ax = plt.subplots(figsize = (6,4))
+    i = 0
+    x = []
+    y = []
+    for data, name, c in zip(data_list, group_name, color):
+        print(np.ones(len(data)).shape)
+        print(data.shape)
+        plt.scatter(np.ones(len(data))*i, data, facecolors='none', edgecolors= c, alpha = 1)
+        # plt.scatter(i,np.nanmean(data),fa.cecolors='none', edgecolors= 'k',lw = 2)
+        plt.errorbar(i, np.nanmean(data), np.std(data)/np.sqrt(len(data)),color = 'grey',lw = 2.5,capsize=6,markeredgewidth=2.5)
+        
+        x.append(list(np.ones(len(data))*i))
+        y.append(list(data))
+
+        if i%2 == 1:
+            print(*x,*y)
+            plt.plot(x,y,color = 'grey',alpha = 0.2)
+            x = []
+            y = []
+        i += 1
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+    ax.spines['bottom'].set_visible(True)
+    ax.spines['left'].set_visible(True)
+    plt.xlim([-1,len(data_list)])
+    plt.xticks(np.arange(len(data_list)),group_name,rotation=45,ha = 'right')  
+    
+    plt.ylabel('licking rate (s)')
+    plt.xlabel('odor contingency')
+    plt.savefig("{0}/{1}_dot_{2}.png".format(savepath,savename,date.today()), bbox_inches="tight", dpi = 300)
+    plt.savefig("{0}/{1}_dot_{2}.eps".format(savepath,savename,date.today()), bbox_inches="tight", dpi = 300)
+    
+    plt.show()
+        
+
+deg_session10 = np.nanmean(deg_mice_lick_dict['go'][:,10:25,9],axis = 1)
+control_session10 = np.nanmean(control_mice_lick_dict['go'][:,10:25,9],axis = 1)
+c_session10 = np.nanmean(c_mice_lick_dict['go'][:,10:25,9],axis = 1)
+deg_session5 = np.nanmean(deg_mice_lick_dict['go'][:,10:25,4],axis = 1)
+control_session5 = np.nanmean(control_mice_lick_dict['go'][:,10:25,4],axis = 1)
+c_session5 = np.nanmean(c_mice_lick_dict['go'][:,10:25,4],axis = 1)
+
+savepath = 'D:/PhD/Figures/lickings'
+create_dot_pot([deg_session5, deg_session10, control_session5,control_session10, c_session5, c_session10],
+               ['deg bef','deg after','ctrl bef','ctrl after','c bef','c after'],
+               ['#ff8143','#fcb85d','#1b9e77','#66c2a5','#7570b3','#8da0cb',],
+               savepath,savename = 'three group before after degradation licking compare')
 
 
 #%% not being used below, could use for supplementary

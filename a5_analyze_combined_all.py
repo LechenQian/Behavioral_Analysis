@@ -29,12 +29,12 @@ from a1_parse_data_v2 import load_pickleddata
 
 #%% load combined dataframes
 path = 'D:/PhD/Behavior/Behavior_Analysis/batch_clean_database/parsed_dataframe_pickle'
-filepath = os.path.join(path,'combined_all_clean_2022-04-07.pickle')
+filepath = os.path.join(path,'combined_all_clean_2023-01-19.pickle')
 data = load_pickleddata(filepath)
-savefig_path = 'D:/PhD/Behavior/Behavior_Analysis/batch_clean_database/figures/final_analysis/{}/'.format(date.today())
+savefig_path = 'D:/PhD/Figures/lickings'
 
-# groups I have 'cond_control','deg','c_control','far','close','recond','deg_less','deg_more'
-
+# groups I have 'cond_control','deg','c_control','far','close','recond','deg_less','deg_more','double_control','deg_spare'
+# ,'cond_control_spare'
 #%% normalization
 new_data_rate_antici = data[(data['status']=='cond')&(data['session']<=5)&(data['trialtype'].isin(['go','go_omit']))]
 data1  =new_data_rate_antici.groupby(by = ['mouse_name','session']).mean()
@@ -48,8 +48,11 @@ for mouse_name in data['mouse_name'].unique():
     
 #%% comparison bettween control and deg
     
+
+    
 x = 'session'
-# y = 'norm_rate_antici'
+y = 'norm_rate_antici'
+TT = 'go'
 # y = 'latency_to_rew'
 # y = 'rate_antici'
 
@@ -57,10 +60,51 @@ x = 'session'
 # y = 'lick_rate_whole_trial'
 # y = 'latency_to_odor'
 # y = 'anti_duration'
-y = 'rate_after'
-#%%
-data_deg_cond = data[(data['group'].isin(['cond_control','deg','recond']))&(data['trialtype'].isin(['go','go_omit']))&(data['phase']<3)]
-data_deg_cond['group'] = data_deg_cond['group'].replace({'recond': 'deg'})
+# y = 'rate_after'
+
+data_deg_cond = data[(data['group'].isin(['cond_control','deg','c_odor']))&(data['trialtype'].isin([TT]))&(data['phase']<3)]
+# data_deg_cond['group'] = data_deg_cond['group'].replace({'recond': 'deg'})
+
+data_deg_cond =  data_deg_cond.groupby(['mouse_name','session','group','phase'])[y].mean().reset_index()
+
+sns.set_context("talk", font_scale=0.9)
+sns.color_palette("Set2")
+
+fig,ax = plt.subplots(1,1,figsize = (6,4))
+# palette = sns.color_palette("mako_r", 2)
+sns.lineplot(data = data_deg_cond,x = x,y = y,hue = 'group',style = 'phase',ax = ax,markers = True,err_style="bars",
+             ci=68, palette=['#1b9e77','#ff8143','#7570b3'])
+
+TT = 'no_go'
+data_deg_cond = data[(data['group'].isin(['cond_control','deg','c_odor']))&(data['trialtype'].isin([TT]))&(data['phase']<3)]
+# data_deg_cond['group'] = data_deg_cond['group'].replace({'recond': 'deg'})
+
+data_deg_cond =  data_deg_cond.groupby(['mouse_name','session','group','phase'])[y].mean().reset_index()
+sns.lineplot(data = data_deg_cond,x = x,y = y,hue = 'group',style = 'phase',ax = ax,markers = True,err_style="bars",
+             ci=68, palette=['#67857d','#ad814e','#6f84a6'])
+
+
+plt.legend(frameon=False,fontsize = 12,bbox_to_anchor=(1.01, 1))
+sns.despine()
+# plt.savefig(os.path.join(savefig_path,'control_vs_deg(recond)_{}.pdf'.format(y)), bbox_inches="tight", dpi = 400)
+plt.savefig(os.path.join(savefig_path,'control_vs_deg_vs_ccontrol_{}_{}.eps'.format(y,date.today())), bbox_inches="tight", dpi = 300)
+plt.savefig(os.path.join(savefig_path,'control_vs_deg_vs_ccontrol_{}_{}.png'.format(y,date.today())), bbox_inches="tight", dpi = 300)
+#%% without no go
+
+x = 'session'
+y = 'norm_rate_antici'
+TT = 'go'
+# y = 'latency_to_rew'
+# y = 'rate_antici'
+
+# y = 'is_Correct'
+# y = 'lick_rate_whole_trial'
+# y = 'latency_to_odor'
+# y = 'anti_duration'
+# y = 'rate_after'
+
+data_deg_cond = data[(data['group'].isin(['deg','cond_control','c_odor']))&(data['trialtype'].isin([TT]))&(data['phase']<3)]
+# data_deg_cond['group'] = data_deg_cond['group'].replace({'recond': 'deg'})
 
 data_deg_cond =  data_deg_cond.groupby(['mouse_name','session','group','phase'])[y].mean().reset_index()
 
@@ -70,12 +114,59 @@ sns.color_palette("Set2")
 fig,ax = plt.subplots(1,1,figsize = (5,4))
 # palette = sns.color_palette("mako_r", 2)
 sns.lineplot(data = data_deg_cond,x = x,y = y,hue = 'group',style = 'phase',ax = ax,markers = True,err_style="bars",
-             ci=68, palette='Set2')
+             ci=68, palette=['#1b9e77','#ff8143','#7570b3'])
+
+
 plt.legend(frameon=False,fontsize = 12,bbox_to_anchor=(1.01, 1))
 sns.despine()
 # plt.savefig(os.path.join(savefig_path,'control_vs_deg(recond)_{}.pdf'.format(y)), bbox_inches="tight", dpi = 400)
-# plt.savefig(os.path.join(savefig_path,'control_vs_deg(recond)_{}.eps'.format(y)), bbox_inches="tight", dpi = 400)
-plt.savefig(os.path.join(savefig_path,'control_vs_deg(recond)_{}.png'.format(y)), bbox_inches="tight", dpi = 200)
+plt.savefig(os.path.join(savefig_path,'control_vs_deg_vs_c_go{}_{}.eps'.format(y,date.today())), bbox_inches="tight", dpi = 300)
+plt.savefig(os.path.join(savefig_path,'control_vs_deg_vs_c_go{}_{}.png'.format(y,date.today())), bbox_inches="tight", dpi = 300)
+
+
+#%% compre control and odor C
+
+x = 'session'
+# y = 'norm_rate_antici'
+TT = ['c_reward','go',]
+# y = 'latency_to_rew'
+# y = 'rate_antici'
+
+# y = 'is_Correct'
+# y = 'lick_rate_whole_trial'
+y = 'latency_to_odor'
+# y = 'anti_duration'
+# y = 'rate_after'
+
+data_deg_cond = data[(data['group'].isin(['deg','cond_control','c_odor']))&(data['trialtype'].isin(TT))&(data['phase']<3)]
+# data_deg_cond['group'] = data_deg_cond['group'].replace({'recond': 'deg'})
+
+data_deg_cond =  data_deg_cond.groupby(['mouse_name','session','group','trialtype','phase'])[y].mean().reset_index()
+
+sns.set_context("talk", font_scale=0.9)
+sns.color_palette("Set2")
+
+fig,ax = plt.subplots(1,1,figsize = (5,4))
+# palette = sns.color_palette("mako_r", 2)
+sns.lineplot(data = data_deg_cond,x = x,y = y,hue = 'group',style = 'phase',size = 'trialtype',
+             size_order = ['c_reward','go'],sizes=(2.5,5),
+              ax = ax,markers = True,err_style="bars",
+             ci=68, palette=['#1b9e77','#ff8143','#7570b3'])
+
+
+plt.legend(frameon=False,fontsize = 12,bbox_to_anchor=(1.01, 1))
+sns.despine()
+# plt.savefig(os.path.join(savefig_path,'control_vs_deg(recond)_{}.pdf'.format(y)), bbox_inches="tight", dpi = 400)
+plt.savefig(os.path.join(savefig_path,'control_deg_vs_c_with c odor_{}_{}.eps'.format(y,date.today())), bbox_inches="tight", dpi = 300)
+plt.savefig(os.path.join(savefig_path,'control_deg_vs_c_with c odor_{}_{}.png'.format(y,date.today())), bbox_inches="tight", dpi = 300)
+
+
+
+
+
+
+
+
 
 
 #%% comparison bettween control deg and recond
