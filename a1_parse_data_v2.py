@@ -517,11 +517,11 @@ if __name__ == '__main__':
     is_original = False # when use clean data, change it to False
     
     #********************
-    load_path = 'D:/PhD/Behavior/behavior_21_07_image/clean_data/'
+    load_path = 'D:/PhD/Behavior/analyzed/behavior_21_04/experiment_data_2021_04_Pav/clean_data/'
     
     # load file
-    # mouse_names = ['C50','C52','C53','C54']
-    mouse_names = ['D1-15','D2-18']
+    
+    mouse_names = ['D2-16']
     for mouse_name in mouse_names:
         cute = Mouse_data(mouse_name, filedir = load_path)
         cute.read_filename()

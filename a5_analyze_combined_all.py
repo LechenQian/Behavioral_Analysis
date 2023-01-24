@@ -23,15 +23,15 @@ import csv
 import pickle
 import sys
 sys.path.insert(0,'D:/PhD/Behavior/Behavior_Analysis/batch_clean_selected')
-from parse_data_2020 import Mouse_data
-from parse_data_2020 import pickle_dict
-from parse_data_2020 import load_pickleddata
+from a1_parse_data_v2 import Mouse_data
+from a1_parse_data_v2 import pickle_dict
+from a1_parse_data_v2 import load_pickleddata
 
 #%% load combined dataframes
-path = 'D:/PhD/Behavior/Behavior_Analysis/batch_clean_selected/parsed_dataframe_pickle'
-filepath = os.path.join(path,'combined_all_clean_2021-03-24.pickle')
+path = 'D:/PhD/Behavior/Behavior_Analysis/batch_clean_database/parsed_dataframe_pickle'
+filepath = os.path.join(path,'combined_all_clean_2022-04-07.pickle')
 data = load_pickleddata(filepath)
-savefig_path = 'D:/PhD/Behavior/Behavior_Analysis/batch_clean_selected/figures/final_analysis/{}'.format(date.today())
+savefig_path = 'D:/PhD/Behavior/Behavior_Analysis/batch_clean_database/figures/final_analysis/{}/'.format(date.today())
 
 # groups I have 'cond_control','deg','c_control','far','close','recond','deg_less','deg_more'
 
@@ -50,7 +50,14 @@ for mouse_name in data['mouse_name'].unique():
     
 x = 'session'
 # y = 'norm_rate_antici'
-y = 'latency_to_rew'
+# y = 'latency_to_rew'
+# y = 'rate_antici'
+
+# y = 'is_Correct'
+# y = 'lick_rate_whole_trial'
+# y = 'latency_to_odor'
+# y = 'anti_duration'
+y = 'rate_after'
 #%%
 data_deg_cond = data[(data['group'].isin(['cond_control','deg','recond']))&(data['trialtype'].isin(['go','go_omit']))&(data['phase']<3)]
 data_deg_cond['group'] = data_deg_cond['group'].replace({'recond': 'deg'})
@@ -66,9 +73,9 @@ sns.lineplot(data = data_deg_cond,x = x,y = y,hue = 'group',style = 'phase',ax =
              ci=68, palette='Set2')
 plt.legend(frameon=False,fontsize = 12,bbox_to_anchor=(1.01, 1))
 sns.despine()
-plt.savefig(os.path.join(savefig_path,'control_vs_deg(recond)_{}.pdf'.format(y)), bbox_inches="tight", dpi = 400)
-plt.savefig(os.path.join(savefig_path,'control_vs_deg(recond)_{}.eps'.format(y)), bbox_inches="tight", dpi = 400)
-plt.savefig(os.path.join(savefig_path,'control_vs_deg(recond)_{}.png'.format(y)), bbox_inches="tight", dpi = 400)
+# plt.savefig(os.path.join(savefig_path,'control_vs_deg(recond)_{}.pdf'.format(y)), bbox_inches="tight", dpi = 400)
+# plt.savefig(os.path.join(savefig_path,'control_vs_deg(recond)_{}.eps'.format(y)), bbox_inches="tight", dpi = 400)
+plt.savefig(os.path.join(savefig_path,'control_vs_deg(recond)_{}.png'.format(y)), bbox_inches="tight", dpi = 200)
 
 
 #%% comparison bettween control deg and recond
@@ -76,14 +83,14 @@ data_deg_cond = data[(data['group'].isin(['cond_control','deg','recond']))&(data
 data_deg_cond =  data_deg_cond.groupby(['mouse_name','session','group','phase'])[y].mean().reset_index()
 
 fig,ax = plt.subplots(1,1,figsize = (5,4))
-sns.lineplot(data = data_deg_cond,x = x,y = y,hue = 'group',style = 'phase',ax = ax,
+sns.lineplot(data = data_deg_cond,x = x,y = y,hue = 'group',style = 'phase',ax = ax,hue_order = ['cond_control','deg','recond'],
              markers = True,err_style="bars",palette='Set2',
              ci=68,)
 plt.legend(frameon=False,fontsize = 12,bbox_to_anchor=(1.01, 1))
 sns.despine()
-plt.savefig(os.path.join(savefig_path,'control_vs_deg_vs_recond_{}.pdf'.format(y)), bbox_inches="tight", dpi = 400)
-plt.savefig(os.path.join(savefig_path,'control_vs_deg_vs_recond_{}.eps'.format(y)), bbox_inches="tight", dpi = 400)
-plt.savefig(os.path.join(savefig_path,'control_vs_deg_vs_recond_{}.png'.format(y)), bbox_inches="tight", dpi = 400)
+# plt.savefig(os.path.join(savefig_path,'control_vs_deg_vs_recond_{}.pdf'.format(y)), bbox_inches="tight", dpi = 400)
+# plt.savefig(os.path.join(savefig_path,'control_vs_deg_vs_recond_{}.eps'.format(y)), bbox_inches="tight", dpi = 400)
+plt.savefig(os.path.join(savefig_path,'control_vs_deg_vs_recond_{}.png'.format(y)), bbox_inches="tight", dpi = 100)
     
 
 #%% comparison bettween control deg and c_control
@@ -98,28 +105,28 @@ sns.lineplot(data = data_deg_cond,x = x,y = y,hue = 'group',style = 'phase',ax =
 plt.legend(frameon=False,fontsize = 12,bbox_to_anchor=(1.01, 1))
 sns.despine()
 
-plt.savefig(os.path.join(savefig_path,'control_vs_deg(recond)_vs_ccontrol_{}.pdf'.format(y)), bbox_inches="tight", dpi = 400)
-plt.savefig(os.path.join(savefig_path,'control_vs_deg(recond)_vs_ccontrol_{}.eps'.format(y)), bbox_inches="tight", dpi = 400)
-plt.savefig(os.path.join(savefig_path,'control_vs_deg(recond)_vs_ccontrol_{}.png'.format(y)), bbox_inches="tight", dpi = 400)
+# plt.savefig(os.path.join(savefig_path,'control_vs_deg(recond)_vs_ccontrol_{}.pdf'.format(y)), bbox_inches="tight", dpi = 400)
+# plt.savefig(os.path.join(savefig_path,'control_vs_deg(recond)_vs_ccontrol_{}.eps'.format(y)), bbox_inches="tight", dpi = 400)
+plt.savefig(os.path.join(savefig_path,'control_vs_deg(recond)_vs_ccontrol_{}.png'.format(y)), bbox_inches="tight", dpi = 100)
 
 
 #%% comparison bettween deg far and close groups
-data_deg_cond = data[(data['group'].isin(['cond_control','deg','far','close','recond']))&(data['trialtype'].isin(['go','go_omit']))&(data['phase']<3)]
-data_deg_cond['group'] = data_deg_cond['group'].replace({'recond': 'deg'})
-data_deg_cond['group'] = data_deg_cond['group'].replace({'close': 'long interval'})
-data_deg_cond['group'] = data_deg_cond['group'].replace({'far': 'short interval'})
-data_deg_cond =  data_deg_cond.groupby(['mouse_name','session','group','phase'])[y].mean().reset_index()
+# data_deg_cond = data[(data['group'].isin(['cond_control','deg','far','close','recond']))&(data['trialtype'].isin(['go','go_omit']))&(data['phase']<3)]
+# data_deg_cond['group'] = data_deg_cond['group'].replace({'recond': 'deg'})
+# data_deg_cond['group'] = data_deg_cond['group'].replace({'close': 'long interval'})
+# data_deg_cond['group'] = data_deg_cond['group'].replace({'far': 'short interval'})
+# data_deg_cond =  data_deg_cond.groupby(['mouse_name','session','group','phase'])[y].mean().reset_index()
 
-fig,ax = plt.subplots(1,1,figsize = (5,4))
-sns.lineplot(data = data_deg_cond,x = x,y = y,hue = 'group',style = 'phase',ax = ax,
-             markers = True,err_style="bars",palette='Set2',
-             ci=68,)
-plt.legend(frameon=False,fontsize = 12,bbox_to_anchor=(1.01, 1))
-sns.despine()
+# fig,ax = plt.subplots(1,1,figsize = (5,4))
+# sns.lineplot(data = data_deg_cond,x = x,y = y,hue = 'group',style = 'phase',ax = ax,
+#              markers = True,err_style="bars",palette='Set2',
+#              ci=68,)
+# plt.legend(frameon=False,fontsize = 12,bbox_to_anchor=(1.01, 1))
+# sns.despine()
 
-plt.savefig(os.path.join(savefig_path,'control_deg(recond)_vs_far_vs_close_{}.pdf'.format(y)), bbox_inches="tight", dpi = 400)
-plt.savefig(os.path.join(savefig_path,'control_deg(recond)_vs_far_vs_close_{}.eps'.format(y)), bbox_inches="tight", dpi = 400)
-plt.savefig(os.path.join(savefig_path,'control_deg(recond)_vs_far_vs_close_{}.png'.format(y)), bbox_inches="tight", dpi = 400)
+# plt.savefig(os.path.join(savefig_path,'control_deg(recond)_vs_far_vs_close_{}.pdf'.format(y)), bbox_inches="tight", dpi = 400)
+# plt.savefig(os.path.join(savefig_path,'control_deg(recond)_vs_far_vs_close_{}.eps'.format(y)), bbox_inches="tight", dpi = 400)
+# plt.savefig(os.path.join(savefig_path,'control_deg(recond)_vs_far_vs_close_{}.png'.format(y)), bbox_inches="tight", dpi = 400)
 #%%
 data_deg_cond = data[(data['group'].isin(['cond_control','deg','recond']))&(data['trialtype'].isin(['go','go_omit']))&(data['phase']<3)]
 data_deg_cond['group'] = data_deg_cond['group'].replace({'recond': 'deg'})
@@ -133,9 +140,9 @@ sns.lineplot(data = data_deg_cond,x = x,y = y,hue = 'group',style = 'phase',size
              ci=68,)
 plt.legend(frameon=False,fontsize = 12,bbox_to_anchor=(1.01, 1))
 sns.despine()
-plt.savefig(os.path.join(savefig_path,'imaging_control_vs_deg(recond)_{}.pdf'.format(y)), bbox_inches="tight", dpi = 400)
-plt.savefig(os.path.join(savefig_path,'imaging_control_vs_deg(recond)_{}.eps'.format(y)), bbox_inches="tight", dpi = 400)
-plt.savefig(os.path.join(savefig_path,'imaging_control_vs_deg(recond)_{}.png'.format(y)), bbox_inches="tight", dpi = 400)
+# plt.savefig(os.path.join(savefig_path,'imaging_control_vs_deg(recond)_{}.pdf'.format(y)), bbox_inches="tight", dpi = 400)
+# plt.savefig(os.path.join(savefig_path,'imaging_control_vs_deg(recond)_{}.eps'.format(y)), bbox_inches="tight", dpi = 400)
+plt.savefig(os.path.join(savefig_path,'imaging_control_vs_deg(recond)_{}.png'.format(y)), bbox_inches="tight", dpi = 100)
 
 #%% correction comparison bettween all
 data_deg_cond = data[(data['group'].isin(['cond_control','deg','c_control','far','close','recond']))&(data['trialtype'].isin(['go','go_omit']))]
@@ -178,9 +185,9 @@ sns.lineplot(data = data_deg_cond,x = x,y = y,hue = 'group',style = 'phase',ax =
              ci=68, palette='Accent')
 plt.legend(frameon=False,fontsize = 12,bbox_to_anchor=(1.01, 1))
 sns.despine()
-plt.savefig(os.path.join(savefig_path,'bg_control_vs_deg(recond)_{}.pdf'.format(y)), bbox_inches="tight", dpi = 400)
-plt.savefig(os.path.join(savefig_path,'bg_control_vs_deg(recond)_{}.eps'.format(y)), bbox_inches="tight", dpi = 400)
-plt.savefig(os.path.join(savefig_path,'bg_control_vs_deg(recond)_{}.png'.format(y)), bbox_inches="tight", dpi = 400)
+# plt.savefig(os.path.join(savefig_path,'bg_control_vs_deg(recond)_{}.pdf'.format(y)), bbox_inches="tight", dpi = 400)
+# plt.savefig(os.path.join(savefig_path,'bg_control_vs_deg(recond)_{}.eps'.format(y)), bbox_inches="tight", dpi = 400)
+plt.savefig(os.path.join(savefig_path,'bg_control_vs_deg(recond)_{}.png'.format(y)), bbox_inches="tight", dpi = 100)
 
 
 #%% comparison bettween control deg and recond
@@ -210,9 +217,9 @@ sns.lineplot(data = data_deg_cond,x = x,y = y,hue = 'group',style = 'phase',ax =
 plt.legend(frameon=False,fontsize = 12,bbox_to_anchor=(1.01, 1))
 sns.despine()
 
-plt.savefig(os.path.join(savefig_path,'bg_control_vs_deg(recond)_vs_ccontrol_{}.pdf'.format(y)), bbox_inches="tight", dpi = 400)
-plt.savefig(os.path.join(savefig_path,'bg_control_vs_deg(recond)_vs_ccontrol_{}.eps'.format(y)), bbox_inches="tight", dpi = 400)
-plt.savefig(os.path.join(savefig_path,'bg_control_vs_deg(recond)_vs_ccontrol_{}.png'.format(y)), bbox_inches="tight", dpi = 400)
+# plt.savefig(os.path.join(savefig_path,'bg_control_vs_deg(recond)_vs_ccontrol_{}.pdf'.format(y)), bbox_inches="tight", dpi = 400)
+# plt.savefig(os.path.join(savefig_path,'bg_control_vs_deg(recond)_vs_ccontrol_{}.eps'.format(y)), bbox_inches="tight", dpi = 400)
+plt.savefig(os.path.join(savefig_path,'bg_control_vs_deg(recond)_vs_ccontrol_{}.png'.format(y)), bbox_inches="tight", dpi = 100)
 
 
 #%% comparison bettween deg far and close groups
@@ -269,9 +276,9 @@ sns.lineplot(data = data_deg_cond,x = x,y = y,hue = 'group',size = 'trialtype',s
              ci=68, palette='Accent')
 plt.legend(frameon=False,fontsize = 12,bbox_to_anchor=(1.01, 1))
 sns.despine()
-plt.savefig(os.path.join(savefig_path,'go&nogo_control_vs_deg(recond)_{}.pdf'.format(y)), bbox_inches="tight", dpi = 400)
-plt.savefig(os.path.join(savefig_path,'go&nogo_control_vs_deg(recond)_{}.eps'.format(y)), bbox_inches="tight", dpi = 400)
-plt.savefig(os.path.join(savefig_path,'go&nogo_control_vs_deg(recond)_{}.png'.format(y)), bbox_inches="tight", dpi = 400)
+# plt.savefig(os.path.join(savefig_path,'go&nogo_control_vs_deg(recond)_{}.pdf'.format(y)), bbox_inches="tight", dpi = 400)
+# plt.savefig(os.path.join(savefig_path,'go&nogo_control_vs_deg(recond)_{}.eps'.format(y)), bbox_inches="tight", dpi = 400)
+plt.savefig(os.path.join(savefig_path,'go&nogo_control_vs_deg(recond)_{}.png'.format(y)), bbox_inches="tight", dpi = 100)
 
 
 #%% comparison bettween control deg and recond
@@ -303,7 +310,7 @@ sns.despine()
 
 # plt.savefig(os.path.join(savefig_path,'go&nogo_control_vs_deg(recond)_vs_ccontrol_{}.pdf'.format(y)), bbox_inches="tight", dpi = 400)
 # plt.savefig(os.path.join(savefig_path,'go&nogo_control_vs_deg(recond)_vs_ccontrol_{}.eps'.format(y)), bbox_inches="tight", dpi = 400)
-# plt.savefig(os.path.join(savefig_path,'go&nogo_control_vs_deg(recond)_vs_ccontrol_{}.png'.format(y)), bbox_inches="tight", dpi = 400)
+plt.savefig(os.path.join(savefig_path,'go&nogo_control_vs_deg(recond)_vs_ccontrol_{}.png'.format(y)), bbox_inches="tight", dpi = 100)
 
 
 #%% comparison bettween deg far and close groups
